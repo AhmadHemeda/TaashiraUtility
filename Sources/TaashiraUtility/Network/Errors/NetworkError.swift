@@ -33,8 +33,6 @@ extension NetworkError {
             return "No internet connection: \(self.localizedDescription)"
         case .decodingError:
             return "Decoding failed."
-        default:
-            return "Unexpected Error: \(self.localizedDescription)"
         }
     }
 }
