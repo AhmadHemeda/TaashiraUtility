@@ -34,6 +34,5 @@ extension NetworkError {
         case .decodingError:
             return "Decoding failed."
         }
-//        just for test
     }
 }
