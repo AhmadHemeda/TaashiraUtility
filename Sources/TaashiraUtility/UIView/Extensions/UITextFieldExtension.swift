@@ -2,24 +2,26 @@ import Foundation
 import UIKit
 
 @IBDesignable extension UITextField {
-    public func setupRightSideImage(imageViewNamed: String){
+    public func setupSideImage(imageViewNamed: String, imageFrame: CGRect, containerFrame: CGRect, alignment: Alignment){
         let imageView = UIImageView(
-            frame: CGRect(
-                x: 0,
-                y: 2,
-                width: 16,
-                height: 16))
+            frame: imageFrame)
         imageView.image = UIImage(named: imageViewNamed)
         let imageViewContainerView = UIView(
-            frame: CGRect(
-                x: 0,
-                y: 0,
-                width: 20,
-                height: 20))
+            frame: containerFrame)
         imageViewContainerView.addSubview(imageView)
-        rightView = imageViewContainerView
-        rightViewMode = .always
-        
+        switch alignment {
+        case .right:
+            rightView = imageViewContainerView
+            rightViewMode = .always
+        case .left:
+            leftView = imageViewContainerView
+            leftViewMode = .always
+        }
     }
     
+}
+
+public enum Alignment {
+    case right
+    case left
 }

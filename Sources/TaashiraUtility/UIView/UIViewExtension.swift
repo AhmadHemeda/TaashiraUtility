@@ -35,6 +35,23 @@ import UIKit
             return layer.cornerRadius
         }
     }
+    @IBInspectable public var shadowRadius:CGFloat {
+        set {
+            layer.shadowRadius = newValue
+            clipsToBounds = newValue > 0
+        }
+        get {
+            return layer.shadowRadius
+        }
+    }
+    @IBInspectable public var shadowOpacity: Float {
+        set {
+            layer.shadowOpacity = newValue
+        }
+        get {
+            return layer.shadowOpacity
+        }
+    }
     @IBInspectable public var padding:CGFloat {
         
         set {
@@ -48,17 +65,21 @@ import UIKit
         }
     }
     
-    class func loadFromNibNamed(
-        _ nibNamed: String,
-        bundle : Bundle? = nil,
-        owner: AnyObject
-    ) -> UIView? {
-        return UINib(
-            nibName: nibNamed,
-            bundle: bundle
-        ).instantiate(
-            withOwner: owner,
-            options: nil
-        )[0] as? UIView
+    @IBInspectable public var shadowColor:UIColor? {
+        set {
+            layer.shadowColor = newValue!.cgColor
+        }
+        get {
+            if let color = layer.shadowColor {
+                return UIColor(
+                    cgColor:color
+                )
+            }
+            else {
+                return nil
+            }
+        }
     }
+    
+    
 }
