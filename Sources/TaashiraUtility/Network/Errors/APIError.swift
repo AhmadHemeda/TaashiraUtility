@@ -1,10 +1,10 @@
 import Foundation
 
-struct APIErrorResponse: Decodable {
+public struct APIErrorResponse: Decodable {
     let message: String
     let errors: [String: [String]]
 }
 
-enum APIError: Error {
+public enum APIError: Error {
     case serverError(APIErrorResponse)
 }
