@@ -17,22 +17,26 @@ open class APIRequestProvider: APIRequestProviderProtocol {
         urlRequest.allHTTPHeaderFields = request.headers
         urlRequest.httpBody = request.body
         
-        return session.dataTaskPublisher(for: urlRequest)
+        return session
+            .dataTaskPublisher(for: urlRequest)
             .print()
             .receive(on: DispatchQueue.main)
-            .tryMap { data, response in
-                guard let httpResponse = response as? HTTPURLResponse else {
-                    throw URLError(.badServerResponse)
-                }
+            .tryMap { data, response -> T.ResponseType in
                 
+                print("Raw Response Data before decode: \(String(data: data, encoding: .utf8) ?? "Unable to decode data")")
                 let decoder = JSONDecoder()
+                print("Raw Response Data after decode: \(String(data: data, encoding: .utf8) ?? "Unable to decode data")")
                 
-                if (200...299).contains(httpResponse.statusCode) {
-                    return try decoder.decode(T.ResponseType.self, from: data)
-                } else {
-                    let apiError = try decoder.decode(APIError.self, from: data)
-                    throw apiError
+                if let httpResponse = try? decoder.decode(
+                    T.ResponseType.self, from: data
+                ) {
+                    print("Raw Response Data before httpResponse: \(String(describing: httpResponse))")
+                    return httpResponse
                 }
+                let error = try decoder.decode(APIError.self, from: data)
+                print("Raw Response Data before errorResponse: \(String(describing: error))")
+                throw error
+                
             }
             .eraseToAnyPublisher()
     }
