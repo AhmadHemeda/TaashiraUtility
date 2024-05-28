@@ -33,9 +33,9 @@ open class APIRequestProvider: APIRequestProviderProtocol {
                     print("Raw Response Data before httpResponse: \(String(describing: httpResponse))")
                     return httpResponse
                 }
-                let error = try decoder.decode(APIError.self, from: data)
-                print("Raw Response Data before errorResponse: \(String(describing: error))")
-                throw error
+                let errorResponse = try decoder.decode(APIError.self, from: data)
+                print("Raw Response Data before errorResponse: \(String(describing: errorResponse))")
+                throw CustomError.firstError(firstErrorMessage: errorResponse.message)
                 
             }
             .eraseToAnyPublisher()
