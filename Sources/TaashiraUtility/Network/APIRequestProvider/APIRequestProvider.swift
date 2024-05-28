@@ -19,6 +19,7 @@ open class APIRequestProvider: APIRequestProviderProtocol {
         
         return session.dataTaskPublisher(for: urlRequest)
             .tryMap { data, response in
+                print("Raw Response Data: \(String(data: data, encoding: .utf8) ?? "Unable to decode data")")
                 guard let httpResponse = response as? HTTPURLResponse else {
                     throw NSError(domain: "NetworkingErrorDomain", code: 0, userInfo: nil)
                 }
