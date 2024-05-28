@@ -1,4 +1,4 @@
 public struct APIError: Error {
-    let message: String
-    let errors: [String: [String]]?
+    public let message: String
+    public let errors: [String: [String]]?
 }
