@@ -16,17 +16,23 @@ open class APIRequestProvider: APIRequestProviderProtocol {
         urlRequest.httpMethod = request.method.rawValue
         urlRequest.allHTTPHeaderFields = request.headers
         urlRequest.httpBody = request.body
-
+        
         return session.dataTaskPublisher(for: urlRequest)
+            .print()
+            .receive(on: DispatchQueue.main)
             .tryMap { data, response in
-                let decoder = JSONDecoder()
-                if let httpResponse = try? decoder.decode(
-                    T.ResponseType.self, from: data
-                ) {
-                    return httpResponse
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    throw URLError(.badServerResponse)
                 }
                 
-                throw try decoder.decode(APIError.self, from: data)
+                let decoder = JSONDecoder()
+                
+                if (200...299).contains(httpResponse.statusCode) {
+                    return try decoder.decode(T.ResponseType.self, from: data)
+                } else {
+                    let apiError = try decoder.decode(APIError.self, from: data)
+                    throw apiError
+                }
             }
             .eraseToAnyPublisher()
     }
