@@ -19,10 +19,16 @@ open class APIRequestProvider: APIRequestProviderProtocol {
         
         return session.dataTaskPublisher(for: urlRequest)
             .tryMap { data, response in
-                guard let httpResponse = response as? HTTPURLResponse, (200..<300).contains(httpResponse.statusCode) else {
+                guard let httpResponse = response as? HTTPURLResponse else {
                     throw NSError(domain: "NetworkingErrorDomain", code: 0, userInfo: nil)
                 }
-                return data
+                
+                if (200..<300).contains(httpResponse.statusCode) {
+                    return data
+                } else {
+                    let errorResponse = try JSONDecoder().decode(APIErrorResponse.self, from: data)
+                    throw APIError.serverError(errorResponse)
+                }
             }
             .decode(type: T.ResponseType.self, decoder: JSONDecoder())
             .eraseToAnyPublisher()
