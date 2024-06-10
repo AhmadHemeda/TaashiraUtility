@@ -15,8 +15,10 @@ open class APIRequestProvider: APIRequestProviderProtocol {
         var urlRequest = URLRequest(url: request.baseURL.appendingPathComponent(request.path))
         urlRequest.httpMethod = request.method.rawValue
         urlRequest.allHTTPHeaderFields = request.headers
+        print("HHHHHHHHH \(request.headers)")
         urlRequest.httpBody = request.body
-        
+        let jsonString = String(data: urlRequest.httpBody!, encoding: .utf8)
+                print("Request Bodyyyyyyy: \(jsonString)")
         return session.dataTaskPublisher(for: urlRequest)
             .tryMap { data, response in
                 guard let httpResponse = response as? HTTPURLResponse, (200..<300).contains(httpResponse.statusCode) else {
